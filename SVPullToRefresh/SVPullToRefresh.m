@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "SVPullToRefresh.h"
 
+static CGFloat const SVPullToRefreshViewOffset = 120;
 static CGFloat const SVPullToRefreshViewHeight = 60;
 
 @interface SVPullToRefreshArrow : UIView
@@ -175,14 +176,14 @@ static CGFloat const SVPullToRefreshViewHeight = 60;
     [self addSubview:self.arrow];
     	
     self.state = SVPullToRefreshStateHidden;    
-    self.frame = CGRectMake(0, -SVPullToRefreshViewHeight, self.scrollView.bounds.size.width, SVPullToRefreshViewHeight);
+    self.frame = CGRectMake(0, -SVPullToRefreshViewOffset, self.scrollView.bounds.size.width, SVPullToRefreshViewHeight);
 }
 
 - (void)setInfiniteScrollingActionHandler:(void (^)(void))actionHandler {
     self.originalTableFooterView = [(UITableView*)self.scrollView tableFooterView];
     infiniteScrollingActionHandler = [actionHandler copy];
     self.showsInfiniteScrolling = YES;
-    self.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, SVPullToRefreshViewHeight);
+    self.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, SVPullToRefreshViewOffset);
     [(UITableView*)self.scrollView setTableFooterView:self];
     self.state = SVPullToRefreshStateHidden;    
     [self layoutSubviews];
@@ -266,7 +267,7 @@ static CGFloat const SVPullToRefreshViewHeight = 60;
     if(pullToRefreshActionHandler) {
         if (self.state == SVPullToRefreshStateLoading) {
             CGFloat offset = MAX(self.scrollView.contentOffset.y * -1, 0);
-            offset = MIN(offset, self.originalScrollViewContentInset.top + SVPullToRefreshViewHeight);
+            offset = MIN(offset, self.originalScrollViewContentInset.top + SVPullToRefreshViewOffset);
             self.scrollView.contentInset = UIEdgeInsetsMake(offset, 0.0f, 0.0f, 0.0f);
         } else {
             CGFloat scrollOffsetThreshold = self.frame.origin.y-self.originalScrollViewContentInset.top;
@@ -293,7 +294,7 @@ static CGFloat const SVPullToRefreshViewHeight = 60;
 
 - (void)triggerRefresh {
     self.state = SVPullToRefreshStateLoading;
-    [self.scrollView setContentOffset:CGPointMake(0, -SVPullToRefreshViewHeight) animated:YES];
+    [self.scrollView setContentOffset:CGPointMake(0, -SVPullToRefreshViewOffset) animated:YES];
 }
 
 - (void)startAnimating{
